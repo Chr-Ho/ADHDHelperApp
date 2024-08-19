@@ -1,5 +1,6 @@
 package com.example.adhdhelperapp;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -51,25 +52,25 @@ public class FocusTimerFragment extends Fragment {
             @Override
             public void onFinish() {
                 isRunning = false;
-                startButton.setText("Start");
+                startButton.setText(R.string.start);
             }
         }.start();
 
         isRunning = true;
-        startButton.setText("Pause");
+        startButton.setText(R.string.pause);
     }
 
     private void pauseTimer() {
         countDownTimer.cancel();
         isRunning = false;
-        startButton.setText("Start");
+        startButton.setText(R.string.start);
     }
 
     private void updateTimerText() {
         int minutes = (int) (timeLeftInMillis / 1000) / 60;
         int seconds = (int) (timeLeftInMillis / 1000) % 60;
 
-        String timeFormatted = String.format("%02d:%02d", minutes, seconds);
+        @SuppressLint("DefaultLocale") String timeFormatted = String.format("%02d:%02d", minutes, seconds);
         timerTextView.setText(timeFormatted);
     }
 }

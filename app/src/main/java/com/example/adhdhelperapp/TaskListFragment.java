@@ -15,6 +15,8 @@ import java.util.List;
 public class TaskListFragment extends Fragment {
 
     private List<Task> taskList;
+    private RecyclerView recyclerView;
+    private TaskAdapter adapter;
 
     @Nullable
     @Override
@@ -22,14 +24,20 @@ public class TaskListFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_task_list, container, false);
 
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        // Initialize RecyclerView
+        recyclerView = view.findViewById(R.id.recycler_view);
+
+        // Set LayoutManager
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // Initialize task list
         taskList = new ArrayList<>();
         taskList.add(new Task("Task 1"));
         taskList.add(new Task("Task 2"));
+        // Add more tasks as needed
 
-        TaskAdapter adapter = new TaskAdapter(taskList);
+        // Set Adapter
+        adapter = new TaskAdapter(taskList);
         recyclerView.setAdapter(adapter);
 
         return view;

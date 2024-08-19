@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">ADHDHelperApp</string>
+    <string name="start">Start</string>
+    <string name="pause">Pause</string>
+    <string name="_25_00">25:00</string>
+    <string name="tasks">Tasks</string>
+    <string name="timer">Timer</string>
+    <string name="resources">Resources</string>
 </resources>
