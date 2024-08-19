@@ -2,17 +2,51 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@drawable/waterripple" >
+    android:padding="16dp">
 
     <TextView
-        android:id="@+id/resources_text"
+        android:id="@+id/ResourceTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/support_groups" />
+
+    <TextView
+        android:id="@+id/link_one"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        android:text="@string/chadd_s_adult_adhd_support"
+        android:textColor="@android:color/holo_blue_dark"
         android:textSize="18sp" />
 
-    <WebView
+    <TextView
+        android:id="@+id/link_two"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        android:text="@string/chadd_s_ahdh_parents_together"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/ResourceTitle2"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:text="@string/information_about_adhd" />
+
+    <TextView
+        android:id="@+id/link_three"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        android:text="@string/about_adhd"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="18sp" />
 
 </LinearLayout>

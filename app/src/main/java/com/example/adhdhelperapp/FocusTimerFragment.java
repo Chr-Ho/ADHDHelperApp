@@ -1,12 +1,14 @@
 package com.example.adhdhelperapp;
 
-import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,9 +18,12 @@ public class FocusTimerFragment extends Fragment {
 
     private TextView timerTextView;
     private Button startButton;
+    private Button resetButton;
+    private Button setTimeButton;
     private CountDownTimer countDownTimer;
     private boolean isRunning = false;
-    private long timeLeftInMillis = 1500000; // 25 minutes
+    private long timeLeftInMillis = 1500000; // 25 minutes in milliseconds
+    private long startTimeInMillis = timeLeftInMillis; // Default start time
 
     @Nullable
     @Override
@@ -28,6 +33,8 @@ public class FocusTimerFragment extends Fragment {
 
         timerTextView = view.findViewById(R.id.timer_text);
         startButton = view.findViewById(R.id.start_button);
+        resetButton = view.findViewById(R.id.reset_button);
+        setTimeButton = view.findViewById(R.id.set_time_button);
 
         startButton.setOnClickListener(v -> {
             if (isRunning) {
@@ -36,6 +43,9 @@ public class FocusTimerFragment extends Fragment {
                 startTimer();
             }
         });
+
+        resetButton.setOnClickListener(v -> resetTimer());
+        setTimeButton.setOnClickListener(v -> showSetTimeDialog());
 
         updateTimerText();
         return view;
@@ -52,25 +62,62 @@ public class FocusTimerFragment extends Fragment {
             @Override
             public void onFinish() {
                 isRunning = false;
-                startButton.setText(R.string.start);
+                startButton.setText("Start");
             }
         }.start();
 
         isRunning = true;
-        startButton.setText(R.string.pause);
+        startButton.setText("Pause");
     }
 
     private void pauseTimer() {
         countDownTimer.cancel();
         isRunning = false;
-        startButton.setText(R.string.start);
+        startButton.setText("Start");
+    }
+
+    private void resetTimer() {
+        timeLeftInMillis = startTimeInMillis;
+        updateTimerText();
+        startButton.setText("Start");
+        if (isRunning) {
+            countDownTimer.cancel();
+            isRunning = false;
+        }
+    }
+
+    private void showSetTimeDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Set Timer Duration");
+
+        final EditText input = new EditText(getContext());
+        input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        input.setHint("Enter time in minutes");
+        builder.setView(input);
+
+        builder.setPositiveButton("Set", (dialog, which) -> {
+            String inputText = input.getText().toString().trim();
+            if (!inputText.isEmpty()) {
+                int minutes = Integer.parseInt(inputText);
+                setTime(minutes);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
+    }
+
+    private void setTime(int minutes) {
+        startTimeInMillis = minutes * 60000L;
+        resetTimer(); // Reset timer to new time
     }
 
     private void updateTimerText() {
         int minutes = (int) (timeLeftInMillis / 1000) / 60;
         int seconds = (int) (timeLeftInMillis / 1000) % 60;
 
-        @SuppressLint("DefaultLocale") String timeFormatted = String.format("%02d:%02d", minutes, seconds);
+        String timeFormatted = String.format("%02d:%02d", minutes, seconds);
         timerTextView.setText(timeFormatted);
     }
 }

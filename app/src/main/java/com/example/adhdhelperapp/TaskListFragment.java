@@ -1,21 +1,24 @@
 package com.example.adhdhelperapp;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class TaskListFragment extends Fragment {
 
     private List<Task> taskList;
-    private RecyclerView recyclerView;
     private TaskAdapter adapter;
 
     @Nullable
@@ -24,22 +27,39 @@ public class TaskListFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_task_list, container, false);
 
-        // Initialize RecyclerView
-        recyclerView = view.findViewById(R.id.recycler_view);
-
-        // Set LayoutManager
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Initialize task list
         taskList = new ArrayList<>();
-        taskList.add(new Task("Task 1"));
-        taskList.add(new Task("Task 2"));
-        // Add more tasks as needed
+        taskList.add(new Task("Add your first task!"));
 
-        // Set Adapter
-        adapter = new TaskAdapter(taskList);
+        adapter = new TaskAdapter(taskList, getContext());  // Pass context here
         recyclerView.setAdapter(adapter);
 
+        FloatingActionButton fab = view.findViewById(R.id.fab_add_task);
+        fab.setOnClickListener(v -> showAddTaskDialog());
+
         return view;
+    }
+
+    private void showAddTaskDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Add New Task");
+
+        final EditText input = new EditText(getContext());
+        input.setHint("Task Title");
+        builder.setView(input);
+
+        builder.setPositiveButton("Add", (dialog, which) -> {
+            String taskTitle = input.getText().toString();
+            if (!taskTitle.isEmpty()) {
+                taskList.add(new Task(taskTitle));
+                adapter.notifyItemInserted(taskList.size() - 1);
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        builder.show();
     }
 }

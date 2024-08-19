@@ -1,5 +1,7 @@
 package com.example.adhdhelperapp;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,9 +19,20 @@ public class ResourcesFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_resources, container, false);
 
-        TextView resourcesTextView = view.findViewById(R.id.resources_text);
-        resourcesTextView.setText("Resources:\n\n- Link 1\n- Link 2\n- Link 3");
+        TextView linkOne = view.findViewById(R.id.link_one);
+        TextView linkTwo = view.findViewById(R.id.link_two);
+        TextView linkThree = view.findViewById(R.id.link_three);
+
+        linkOne.setOnClickListener(v -> openWebPage("https://healthunlocked.com/adult-ADHD"));
+        linkTwo.setOnClickListener(v -> openWebPage("https://healthunlocked.com/adhd-parents"));
+        linkThree.setOnClickListener(v -> openWebPage("https://chadd.org/about-adhd/overview/"));
 
         return view;
+    }
+
+    private void openWebPage(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        startActivity(intent);
     }
 }
