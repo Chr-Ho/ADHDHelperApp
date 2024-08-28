@@ -3,10 +3,10 @@ plugins {
 }
 
 android {
-    namespace 'com.example.adhdhelperapp'  // Replace with your actual package name
+    namespace 'chrho.adhdhelperapp'  // Replace with your actual package name
     compileSdkVersion 34
     defaultConfig {
-        applicationId "com.example.adhdhelperapp"
+        applicationId "chrho.adhdhelperapp"
         minSdkVersion 21
         targetSdkVersion 34
         versionCode 1
