@@ -1,4 +1,4 @@
-package com.example.adhdhelperapp;
+package chr.ho.adhdhelper;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {

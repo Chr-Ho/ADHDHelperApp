@@ -1,6 +1,7 @@
-package com.example.adhdhelperapp;
+package chr.ho.adhdhelper;
 
 import android.app.AlertDialog;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.InputType;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -24,6 +26,7 @@ public class FocusTimerFragment extends Fragment {
     private boolean isRunning = false;
     private long timeLeftInMillis = 1500000; // 25 minutes in milliseconds
     private long startTimeInMillis = timeLeftInMillis; // Default start time
+    private MediaPlayer mediaPlayer; // MediaPlayer for alarm sound
 
     @Nullable
     @Override
@@ -35,6 +38,8 @@ public class FocusTimerFragment extends Fragment {
         startButton = view.findViewById(R.id.start_button);
         resetButton = view.findViewById(R.id.reset_button);
         setTimeButton = view.findViewById(R.id.set_time_button);
+
+        mediaPlayer = MediaPlayer.create(getContext(), R.raw.alarm_sound); // Initialize MediaPlayer
 
         startButton.setOnClickListener(v -> {
             if (isRunning) {
@@ -51,6 +56,15 @@ public class FocusTimerFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mediaPlayer != null) {
+            mediaPlayer.release(); // Release MediaPlayer resources
+            mediaPlayer = null;
+        }
+    }
+
     private void startTimer() {
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
@@ -63,6 +77,7 @@ public class FocusTimerFragment extends Fragment {
             public void onFinish() {
                 isRunning = false;
                 startButton.setText("Start");
+                playAlarm(); // Play alarm sound when timer finishes
             }
         }.start();
 
@@ -119,5 +134,11 @@ public class FocusTimerFragment extends Fragment {
 
         String timeFormatted = String.format("%02d:%02d", minutes, seconds);
         timerTextView.setText(timeFormatted);
+    }
+
+    private void playAlarm() {
+        if (mediaPlayer != null) {
+            mediaPlayer.start(); // Play the alarm sound
+        }
     }
 }

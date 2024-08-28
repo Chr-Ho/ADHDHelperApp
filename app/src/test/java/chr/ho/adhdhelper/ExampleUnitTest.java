@@ -1,4 +1,4 @@
-package com.example.adhdhelperapp;
+package chr.ho.adhdhelper;
 
 import org.junit.Test;
 
