@@ -33,7 +33,8 @@ public class TaskListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         taskList = new ArrayList<>();
-        taskList.add(new Task("Add your first task!"));
+        taskList.add(new Task("Add your first task!", false));
+
 
         adapter = new TaskAdapter(taskList, getContext());  // Pass context here
         recyclerView.setAdapter(adapter);
@@ -55,7 +56,7 @@ public class TaskListFragment extends Fragment {
         builder.setPositiveButton("Add", (dialog, which) -> {
             String taskTitle = input.getText().toString();
             if (!taskTitle.isEmpty()) {
-                taskList.add(new Task(taskTitle));
+                taskList.add(new Task(taskTitle, false)); // Here, 'false' indicates that the task is not completed when added
                 adapter.notifyItemInserted(taskList.size() - 1);
             }
         });

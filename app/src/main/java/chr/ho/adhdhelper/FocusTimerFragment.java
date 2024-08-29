@@ -1,9 +1,12 @@
 package chr.ho.adhdhelper;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.CountDownTimer;
+import android.os.Handler;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +25,13 @@ public class FocusTimerFragment extends Fragment {
     private Button startButton;
     private Button resetButton;
     private Button setTimeButton;
-    private CountDownTimer countDownTimer;
     private boolean isRunning = false;
     private long timeLeftInMillis = 1500000; // 25 minutes in milliseconds
     private long startTimeInMillis = timeLeftInMillis; // Default start time
     private MediaPlayer mediaPlayer; // MediaPlayer for alarm sound
+    private SharedPreferences prefs;
+    private Handler handler = new Handler();
+    private Runnable updateTimerRunnable;
 
     @Nullable
     @Override
@@ -39,66 +44,92 @@ public class FocusTimerFragment extends Fragment {
         resetButton = view.findViewById(R.id.reset_button);
         setTimeButton = view.findViewById(R.id.set_time_button);
 
-        mediaPlayer = MediaPlayer.create(getContext(), R.raw.alarm_sound); // Initialize MediaPlayer
+        prefs = requireContext().getSharedPreferences("TimerPrefs", Context.MODE_PRIVATE);
+        mediaPlayer = MediaPlayer.create(getContext(), R.raw.alarm_sound);
 
-        startButton.setOnClickListener(v -> {
-            if (isRunning) {
-                pauseTimer();
-            } else {
-                startTimer();
-            }
-        });
-
+        startButton.setOnClickListener(v -> toggleTimer());
         resetButton.setOnClickListener(v -> resetTimer());
         setTimeButton.setOnClickListener(v -> showSetTimeDialog());
 
-        updateTimerText();
+        updateTimerRunnable = new Runnable() {
+            @Override
+            public void run() {
+                updateTimerText();
+                handler.postDelayed(this, 1000);
+            }
+        };
+
+        loadTimerState();
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadTimerState();
+        handler.post(updateTimerRunnable);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        handler.removeCallbacks(updateTimerRunnable);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         if (mediaPlayer != null) {
-            mediaPlayer.release(); // Release MediaPlayer resources
+            mediaPlayer.release();
             mediaPlayer = null;
         }
     }
 
+    private void loadTimerState() {
+        timeLeftInMillis = prefs.getLong("remainingTime", startTimeInMillis);
+        isRunning = prefs.getBoolean("isRunning", false);
+        startTimeInMillis = prefs.getLong("startTime", startTimeInMillis);
+        updateTimerText();
+        updateButtonText();
+    }
+
+    private void toggleTimer() {
+        if (isRunning) {
+            pauseTimer();
+        } else {
+            startTimer();
+        }
+    }
+
     private void startTimer() {
-        countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                timeLeftInMillis = millisUntilFinished;
-                updateTimerText();
-            }
-
-            @Override
-            public void onFinish() {
-                isRunning = false;
-                startButton.setText("Start");
-                playAlarm(); // Play alarm sound when timer finishes
-            }
-        }.start();
-
         isRunning = true;
-        startButton.setText("Pause");
+        prefs.edit().putBoolean("isRunning", true).apply();
+        updateButtonText();
+        requireContext().startService(new Intent(requireContext(), TimerService.class)
+                .putExtra("command", "start")
+                .putExtra("time", timeLeftInMillis));
     }
 
     private void pauseTimer() {
-        countDownTimer.cancel();
         isRunning = false;
-        startButton.setText("Start");
+        prefs.edit().putBoolean("isRunning", false).apply();
+        updateButtonText();
+        requireContext().startService(new Intent(requireContext(), TimerService.class)
+                .putExtra("command", "pause"));
     }
 
     private void resetTimer() {
         timeLeftInMillis = startTimeInMillis;
+        isRunning = false;
+        prefs.edit()
+                .putLong("remainingTime", timeLeftInMillis)
+                .putBoolean("isRunning", false)
+                .apply();
         updateTimerText();
-        startButton.setText("Start");
-        if (isRunning) {
-            countDownTimer.cancel();
-            isRunning = false;
-        }
+        updateButtonText();
+        requireContext().startService(new Intent(requireContext(), TimerService.class)
+                .putExtra("command", "reset")
+                .putExtra("time", timeLeftInMillis));
     }
 
     private void showSetTimeDialog() {
@@ -125,20 +156,33 @@ public class FocusTimerFragment extends Fragment {
 
     private void setTime(int minutes) {
         startTimeInMillis = minutes * 60000L;
-        resetTimer(); // Reset timer to new time
+        prefs.edit().putLong("startTime", startTimeInMillis).apply();
+        resetTimer();
     }
 
     private void updateTimerText() {
+        timeLeftInMillis = prefs.getLong("remainingTime", timeLeftInMillis);
         int minutes = (int) (timeLeftInMillis / 1000) / 60;
         int seconds = (int) (timeLeftInMillis / 1000) % 60;
 
         String timeFormatted = String.format("%02d:%02d", minutes, seconds);
         timerTextView.setText(timeFormatted);
+
+        if (timeLeftInMillis == 0 && isRunning) {
+            isRunning = false;
+            prefs.edit().putBoolean("isRunning", false).apply();
+            updateButtonText();
+            playAlarm();
+        }
+    }
+
+    private void updateButtonText() {
+        startButton.setText(isRunning ? "Pause" : "Start");
     }
 
     private void playAlarm() {
         if (mediaPlayer != null) {
-            mediaPlayer.start(); // Play the alarm sound
+            mediaPlayer.start();
         }
     }
 }

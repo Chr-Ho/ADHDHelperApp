@@ -1,27 +1,29 @@
 package chr.ho.adhdhelper;
 
-public class Task {
-    private String title;
-    private boolean isCompleted;
+import java.io.Serializable;
 
-    public Task(String title) {
-        this.title = title;
-        this.isCompleted = false;
-    }
+public class Task implements Serializable {
+        private String title;
+        private boolean completed;
 
-    public String getTitle() {
-        return title;
-    }
+        public Task(String title, boolean completed) {
+            this.title = title;
+            this.completed = completed;
+        }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+        public String getTitle() {
+            return title;
+        }
 
-    public boolean isCompleted() {
-        return isCompleted;
-    }
+        public void setTitle(String title) {
+            this.title = title;
+        }
 
-    public void setCompleted(boolean completed) {
-        isCompleted = completed;
+        public boolean isCompleted() {
+            return completed;
+        }
+
+        public void setCompleted(boolean completed) {
+            this.completed = completed;
+        }
     }
-}
