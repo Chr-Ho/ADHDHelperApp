@@ -4,7 +4,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="16dp"
-    android:background="@drawable/mountainlake"
+    android:background="@drawable/waterripple"
     >
 
     <TextView
@@ -19,20 +19,20 @@
         android:id="@+id/start_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start" />
+        android:text="@string/start" />
 
     <Button
         android:id="@+id/reset_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Reset"
+        android:text="@string/reset"
         android:layout_marginTop="16dp" />  <!-- Add a margin for spacing -->
 
     <Button
         android:id="@+id/set_time_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Set Time"
+        android:text="@string/set_time"
         android:layout_marginTop="16dp" />  <!-- Add a button for setting time -->
 
 </LinearLayout>
