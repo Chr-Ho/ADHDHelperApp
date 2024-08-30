@@ -2,11 +2,11 @@
     <item
         android:id="@+id/navigation_task_list"
         android:icon="@drawable/ic_task_list"
-        android:title="Tasks" />
+        android:title="@string/tasks" />
     <item
         android:id="@+id/navigation_focus_timer"
         android:icon="@drawable/ic_timer"
-        android:title="Timer" />
+        android:title="@string/timer" />
     <item
         android:id="@+id/navigation_resources"
         android:icon="@drawable/ic_resources"
