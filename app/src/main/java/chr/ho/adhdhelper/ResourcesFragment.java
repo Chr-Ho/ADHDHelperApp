@@ -23,10 +23,12 @@ public class ResourcesFragment extends Fragment {
         TextView linkOne = view.findViewById(R.id.link_one);
         TextView linkTwo = view.findViewById(R.id.link_two);
         TextView linkThree = view.findViewById(R.id.link_three);
+        TextView feedbackLink = view.findViewById(R.id.feedback_link);
 
         linkOne.setOnClickListener(v -> openWebPage("https://healthunlocked.com/adult-ADHD"));
         linkTwo.setOnClickListener(v -> openWebPage("https://healthunlocked.com/adhd-parents"));
         linkThree.setOnClickListener(v -> openWebPage("https://chadd.org/about-adhd/overview/"));
+        feedbackLink.setOnClickListener(v -> openWebPage("https://hofeldt32.wixsite.com/chrishofeldt/feedback"));
 
         return view;
     }

@@ -17,4 +17,5 @@
     <string name="task_title_hint">Task Title</string>
     <string name="add">Add</string>
     <string name="cancel">Cancel</string>
+    <string name="provide_feedback">Provide Feedback</string>
 </resources>
