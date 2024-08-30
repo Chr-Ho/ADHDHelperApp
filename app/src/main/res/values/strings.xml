@@ -13,4 +13,8 @@
     <string name="chadd_s_ahdh_parents_together">CHADD\'s AHDH Parents Together</string>
     <string name="information_about_adhd">Information About Adhd</string>
     <string name="about_adhd">About ADHD</string>
+    <string name="add_new_task">Add New Task</string>
+    <string name="task_title_hint">Task Title</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
 </resources>

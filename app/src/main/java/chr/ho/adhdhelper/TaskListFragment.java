@@ -40,6 +40,10 @@ public class TaskListFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        // Add item decoration for consistent spacing
+        int verticalSpacingInDp = getResources().getDimensionPixelSize(R.dimen.item_vertical_spacing);
+        recyclerView.addItemDecoration(new VerticalSpaceItemDecoration(verticalSpacingInDp));
+
         taskList = loadTasks();
         if (taskList.isEmpty()) {
             taskList.add(new Task("Add your first task!", false));
@@ -56,13 +60,13 @@ public class TaskListFragment extends Fragment {
 
     private void showAddTaskDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Add New Task");
+        builder.setTitle(R.string.add_new_task);
 
-        final EditText input = new EditText(getContext());
-        input.setHint("Task Title");
-        builder.setView(input);
+        View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_add_task, null);
+        final EditText input = dialogView.findViewById(R.id.edit_text_task);
+        builder.setView(dialogView);
 
-        builder.setPositiveButton("Add", (dialog, which) -> {
+        builder.setPositiveButton(R.string.add, (dialog, which) -> {
             String taskTitle = input.getText().toString();
             if (!taskTitle.isEmpty()) {
                 taskList.add(new Task(taskTitle, false)); // Here, 'false' indicates that the task is not completed when added
@@ -71,7 +75,7 @@ public class TaskListFragment extends Fragment {
             }
         });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.setNegativeButton(R.string.cancel, (dialog, which) -> dialog.cancel());
 
         builder.show();
     }
