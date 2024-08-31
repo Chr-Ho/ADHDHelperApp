@@ -18,10 +18,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     private final List<Task> taskList;
     private final Context context;
+    private final TaskListFragment fragment;
 
-    public TaskAdapter(List<Task> taskList, Context context) {
+    public TaskAdapter(List<Task> taskList, Context context, TaskListFragment fragment) { // Update constructor
         this.taskList = taskList;
         this.context = context;
+        this.fragment = fragment;
     }
 
     @NonNull
@@ -47,14 +49,23 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         holder.taskCheckBox.setChecked(task.isCompleted());
 
         holder.taskCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            task.setCompleted(isChecked);
+            int adapterPosition = holder.getBindingAdapterPosition();
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                fragment.updateTaskCompletion(adapterPosition, isChecked);
+            }
         });
 
-        // Handle task editing on long press
-        holder.itemView.setOnLongClickListener(v -> {
-            showEditDeleteTaskDialog(holder.getBindingAdapterPosition());
-            return true;
-        });
+        if (position == taskList.size() - 1 && task.getTitle().contains("clear these instructions")) {
+            holder.itemView.setOnClickListener(v -> clearInstructions());
+            holder.taskCheckBox.setVisibility(View.GONE); // Hide checkbox for this special task
+        } else {
+            // Handle task editing on long press for regular tasks
+            holder.itemView.setOnLongClickListener(v -> {
+                showEditDeleteTaskDialog(holder.getBindingAdapterPosition());
+                return true;
+            });
+            holder.taskCheckBox.setVisibility(View.VISIBLE); // Ensure checkbox is visible for regular tasks
+        }
     }
 
     @Override
@@ -86,6 +97,21 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             notifyItemRangeChanged(position, taskList.size());
         });
 
+        builder.show();
+    }
+
+    // Add this method to clear instructions
+    private void clearInstructions() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("Clear Instructions");
+        builder.setMessage("Are you sure you want to clear these instructions? This action cannot be undone.");
+        builder.setPositiveButton("Yes", (dialog, which) -> {
+            taskList.clear();
+            taskList.add(new Task("Add your first task!", false));
+            notifyDataSetChanged();
+            fragment.saveTasks();
+        });
+        builder.setNegativeButton("No", (dialog, which) -> dialog.dismiss());
         builder.show();
     }
 

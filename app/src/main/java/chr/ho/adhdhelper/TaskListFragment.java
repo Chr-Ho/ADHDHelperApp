@@ -27,6 +27,8 @@ public class TaskListFragment extends Fragment {
 
     private static final String PREFS_NAME = "TaskListPrefs";
     private static final String TASKS_KEY = "tasks";
+    private static final String FIRST_RUN_KEY = "isFirstRun";
+    private static final String DEFAULT_TASKS_SHOWN_KEY = "defaultTasksShown";
 
     private List<Task> taskList;
     private TaskAdapter adapter;
@@ -46,10 +48,11 @@ public class TaskListFragment extends Fragment {
 
         taskList = loadTasks();
         if (taskList.isEmpty()) {
-            taskList.add(new Task("Add your first task!", false));
+            taskList = createDefaultTasks();
+            saveTasks();
         }
 
-        adapter = new TaskAdapter(taskList, getContext());  // Pass context here
+        adapter = new TaskAdapter(taskList, getContext(), this);
         recyclerView.setAdapter(adapter);
 
         FloatingActionButton fab = view.findViewById(R.id.fab_add_task);
@@ -80,21 +83,55 @@ public class TaskListFragment extends Fragment {
         builder.show();
     }
 
-    private void saveTasks() {
+    public void saveTasks() {
+        saveTasks(taskList);
+    }
+
+    private void saveTasks(List<Task> tasks) {
         SharedPreferences prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         Gson gson = new Gson();
-        String json = gson.toJson(taskList);
+        String json = gson.toJson(tasks);
         editor.putString(TASKS_KEY, json);
         editor.apply();
     }
 
     private List<Task> loadTasks() {
         SharedPreferences prefs = requireContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        Gson gson = new Gson();
-        String json = prefs.getString(TASKS_KEY, null);
-        Type type = new TypeToken<ArrayList<Task>>() {}.getType();
-        List<Task> loadedTasks = gson.fromJson(json, type);
-        return loadedTasks != null ? loadedTasks : new ArrayList<>();
+        boolean defaultTasksShown = prefs.getBoolean(DEFAULT_TASKS_SHOWN_KEY, false);
+
+        if (!defaultTasksShown) {
+            List<Task> defaultTasks = createDefaultTasks();
+            prefs.edit().putBoolean(DEFAULT_TASKS_SHOWN_KEY, true).apply();
+            saveTasks(defaultTasks);
+            return defaultTasks;
+        } else {
+            Gson gson = new Gson();
+            String json = prefs.getString(TASKS_KEY, null);
+            Type type = new TypeToken<ArrayList<Task>>() {}.getType();
+            List<Task> loadedTasks = gson.fromJson(json, type);
+            return loadedTasks != null ? loadedTasks : new ArrayList<>();
+        }
+    }
+
+    private List<Task> createDefaultTasks() {
+        List<Task> defaultTasks = new ArrayList<>();
+        defaultTasks.add(new Task("Welcome to the ADHD Helper App! Here's how to use it:", false));
+        defaultTasks.add(new Task("Add tasks by tapping the + button", false));
+        defaultTasks.add(new Task("Tap the box to mark it as complete", false));
+        defaultTasks.add(new Task("Long-press a task to edit or delete it", false));
+        defaultTasks.add(new Task("Use the Focus Timer to stay on track", false));
+        defaultTasks.add(new Task("Check Resources for helpful info about ADHD", false));
+        defaultTasks.add(new Task("Tap here to clear these instructions", false));
+        return defaultTasks;
+    }
+
+    // Add this method to update and save a task's completion status
+    public void updateTaskCompletion(int position, boolean isCompleted) {
+        if (position >= 0 && position < taskList.size()) {
+            Task task = taskList.get(position);
+            task.setCompleted(isCompleted);
+            saveTasks();
+        }
     }
 }

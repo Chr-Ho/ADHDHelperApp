@@ -1,17 +1,17 @@
 <resources>
-    <string name="app_name">ADHDHelperApp</string>
+    <string name="app_name">ADHD Helper</string>
     <string name="start">Start</string>
     <string name="pause">Pause</string>
     <string name="_25_00">25:00</string>
     <string name="tasks">Tasks</string>
-    <string name="timer">Timer</string>
+    <string name="timer">Focus Timer</string>
     <string name="resources">Resources</string>
     <string name="add_task">Add Task</string>
     <string name="first_task">Add your first task!</string>
     <string name="support_groups">Support Groups</string>
     <string name="chadd_s_adult_adhd_support">CHADD\'s Adult ADHD Support</string>
-    <string name="chadd_s_ahdh_parents_together">CHADD\'s AHDH Parents Together</string>
-    <string name="information_about_adhd">Information About Adhd</string>
+    <string name="chadd_s_adhd_parents_together">CHADD\'s ADHD Parents Together</string>
+    <string name="information_about_adhd">Information About ADHD</string>
     <string name="about_adhd">About ADHD</string>
     <string name="add_new_task">Add New Task</string>
     <string name="task_title_hint">Task Title</string>

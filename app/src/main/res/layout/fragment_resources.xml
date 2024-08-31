@@ -28,7 +28,7 @@
         android:clickable="true"
         android:focusable="true"
         android:padding="8dp"
-        android:text="@string/chadd_s_ahdh_parents_together"
+        android:text="@string/chadd_s_adhd_parents_together"
         android:textColor="@android:color/holo_blue_dark"
         android:textSize="18sp" />
 
